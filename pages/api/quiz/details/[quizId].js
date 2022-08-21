@@ -9,6 +9,8 @@ export default function handler(req, res) {
             return getQuizDetails(req, res);
         case "PUT":
             return updateDetails(req, res);
+        case "DELETE":
+            return removeQuiz(req, res);
     }
 }
 
