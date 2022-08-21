@@ -26,7 +26,7 @@ async function enrollUserToQuiz(req, res) {
          // Confirm if user already enrolled
          if (quiz.usersEnrolled.includes(userId)){
             return res.status(409).json({
-                message: `User already enrolled`
+                error: `User already enrolled`
             })
         }
 
@@ -45,7 +45,7 @@ async function enrollUserToQuiz(req, res) {
     } catch (err) {
         console.log(err)
         return res.status(400).json({
-            message: 'An error was encountered'
+            error: 'An error was encountered'
         })
     } finally {
         await redis.disconnectClient()

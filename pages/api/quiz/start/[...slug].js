@@ -51,7 +51,7 @@ async function startQuiz(req, res) {
         // Confirm if user already enrolled
         if (!user.quizzesEnrolled.includes(quizId)) {
             return res.status(409).json({
-                message: "You are not enrolled to the quiz",
+                error: "You are not enrolled to the quiz",
             });
         }
 
@@ -87,7 +87,7 @@ async function startQuiz(req, res) {
     } catch (err) {
         console.log(err);
         return res.status(400).json({
-            message: "An error was encountered",
+            error: "An error was encountered",
         });
     } finally {
         await client.close();
@@ -187,7 +187,7 @@ async function markQuiz(req, res) {
         });
     } else {
         return res.status(400).json({
-            message: "An error was encountered",
+            error: "An error was encountered",
         });
     }
 }
@@ -236,7 +236,7 @@ async function getResponses(req, res) {
     } catch (err) {
         console.log(err);
         return res.status(400).json({
-            message: "An error was encountered",
+            error: "An error was encountered",
         });
     } finally {
         await client.close();

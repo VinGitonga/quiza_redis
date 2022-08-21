@@ -61,12 +61,15 @@ async function createQuiz(req, res) {
 
         await quizRepo.save(newQuiz)
 
-        return res.status(200).json(newQuiz.toJSON())
+        return res.status(200).json({
+            message:'Quiz Created Successfully',
+            quizId: newQuiz.entityId
+        })
 
     } catch (err) {
         console.log(err)
         return res.status(400).json({
-            message:`An error was encountered`
+            error:`An error was encountered`
         })
     } finally {
         await redis.disconnectClient()

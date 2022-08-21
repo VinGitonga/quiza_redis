@@ -35,7 +35,7 @@ async function createQuestion(req, res) {
     } catch (err) {
         console.log(err)
         return res.status(400).json({
-            message: 'An error was encountered'
+            error: 'An error was encountered'
         })
     } finally {
         await redis.disconnectClient()
@@ -63,7 +63,7 @@ async function getQuestions(req, res){
     } catch (err) {
         console.log(err)
         return res.status(400).json({
-            message:'An error was encountured'
+            error:'An error was encountured'
         });
     } finally {
         await redis.disconnectClient()
