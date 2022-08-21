@@ -35,8 +35,8 @@ async function enrollUserToQuiz(req, res) {
         user.addQuizEnrolled(quizId)
 
         // save the changes made
-        await quiz.save()
-        await user.save()
+        await quizRepo.save(quiz)
+        await userRepo.save(user)
 
         return res.status(200).json({
             message: 'User enrolled successfully'

@@ -175,8 +175,8 @@ async function markQuiz(req, res) {
         user.quizzesTaken.push(newQuizTaken.entityId);
 
         // save changes made on quiz and user 
-        await user.save()
-        await quiz.save()
+        await quizRepo.save(quiz)
+        await userRepo.save(user)
 
         return res.status(200).json({
             attemptId: attemptId

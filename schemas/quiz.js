@@ -8,6 +8,16 @@ class Quiz extends Entity {
     addUserEnrolled(userId) {
         this.usersEnrolled.push(userId)
     }
+
+    removeUserEnrolled(userId){
+        this.usersEnrolled = this.usersEnrolled.filter(item => item !== userId)
+    }
+
+    updateDetails(description, title, duration){
+        this.description = description
+        this.title = title
+        this.duration = duration
+    }
 };
 
 const quizSchema = new Schema(Quiz, {

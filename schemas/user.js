@@ -35,6 +35,10 @@ class User extends Entity {
     addQuizTaken(quizId) {
         this.quizzesTaken.push(quizId)
     }
+
+    removeQuizEnrolled(quizId){
+        this.quizzesEnrolled = this.quizzesEnrolled.filter(item => item !== quizId)
+    }
 };
 
 const userSchema = new Schema(User, {
