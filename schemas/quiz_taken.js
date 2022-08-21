@@ -7,7 +7,8 @@ const quizTakenSchema = new Schema(QuizTaken, {
     score: { type: 'number' },
     responses: { type: 'string[]' },
     quizId: { type: 'string' },
-    attemptId: { type: 'string' }
+    attemptId: { type: 'string' },
+    quizTitle: {type:"string"}
 },{
     prefix:'quiza:redis-om-node:quizTaken'
 })

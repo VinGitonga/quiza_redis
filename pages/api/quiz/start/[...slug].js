@@ -165,7 +165,8 @@ async function markQuiz(req, res) {
             score: score,
             quizId: quizId,
             attemptId: attemptId,
-            responses: responsesId
+            responses: responsesId,
+            quizTitle: quiz.title,
         })
 
         await quizTakenRepo.save(newQuizTaken);
