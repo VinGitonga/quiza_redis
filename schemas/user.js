@@ -32,8 +32,8 @@ class User extends Entity {
         this.quizzesEnrolled.push(quizId)
     }
 
-    addQuizTaken(quizId) {
-        this.quizzesTaken.push(quizId)
+    addQuizTaken(quizTakenId) {
+        this.quizzesTaken.push(quizTakenId)
     }
 
     removeQuizEnrolled(quizId){

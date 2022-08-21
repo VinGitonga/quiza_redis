@@ -1,8 +1,8 @@
 import { Entity, Schema } from "redis-om"
 
 class Quiz extends Entity {
-    addUserParticipated(userId) {
-        this.usersParticipated.push(userId)
+    addQuizTaken(quizTakenId) {
+        this.quizTaken.push(quizTakenId)
     }
 
     addUserEnrolled(userId) {
