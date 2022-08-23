@@ -3,10 +3,11 @@ import { useSession } from "next-auth/react";
 import axios from "axios";
 import AuthorQuizzes from "../components/quiz/AuthorQuizzes";
 import StudentQuizzes from "../components/quiz/StudentQuizzes";
+import Layout from "../components/Layout";
 
 const fetcher = (url) => axios.get(url).then((resp) => resp.data);
 
-const MyQuizzes = () => {
+export default function MyQuizzes() {
     const { data: session } = useSession();
 
     const { data: quizzes } = useSWR(
@@ -19,9 +20,11 @@ const MyQuizzes = () => {
 
     return session?.user?.isAdmin ? (
         <AuthorQuizzes quizzes={quizzes} />
-        ) : (
+    ) : (
         <StudentQuizzes quizzes={quizzes} />
     );
-};
+}
 
-export default MyQuizzes;
+MyQuizzes.getLayout = function getLayout(page) {
+    return <Layout>{page}</Layout>;
+};

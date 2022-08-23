@@ -11,7 +11,6 @@ import {
     useToast,
 } from "@chakra-ui/react";
 import Card from "../Card";
-import Navbar from "../Navbar";
 import { CgTrash } from "react-icons/cg";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -21,7 +20,6 @@ import ConfirmDialog from "../common/ConfirmDialog";
 const AuthorQuizzes = ({ quizzes }) => {
     return (
         <Box px={8}>
-            <Navbar />
             <Heading py={5}>My Quizzes</Heading>
             <Card>
                 {quizzes?.length === 0 ? (

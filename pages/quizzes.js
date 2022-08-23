@@ -12,7 +12,6 @@ import {
     useToast,
 } from "@chakra-ui/react";
 import Card from "../components/Card";
-import Navbar from "../components/Navbar";
 import { GrAdd } from "react-icons/gr";
 import { useRouter } from "next/router";
 import { enrollToQuiz } from "../services/quiz";
@@ -20,20 +19,20 @@ import { useSession } from "next-auth/react";
 import useSWR from "swr";
 import axios from "axios";
 import ConfirmDialog from "../components/common/ConfirmDialog";
+import Layout from "../components/Layout"
 
 const isEnrolled = (allUsersEnrolled, currentUserId) =>
     allUsersEnrolled.includes(currentUserId);
 
 const fetcher = (url) => axios.get(url).then((resp) => resp.data);
 
-const Quizes = () => {
+export default function Quizes () {
     const { data: session } = useSession();
 
     const { data: quizzes } = useSWR("/api/quiz", fetcher);
 
     return (
         <Box px={8}>
-            <Navbar />
             <Heading py={5}>Quizzas</Heading>
             <Card>
                 {quizzes?.length === 0 ? (
@@ -163,4 +162,10 @@ const QuizItem = ({ quiz, user }) => {
     );
 };
 
-export default Quizes;
+Quizes.getLayout = function getLayout(page){
+    return (
+        <Layout>
+            {page}
+        </Layout>
+    )
+}

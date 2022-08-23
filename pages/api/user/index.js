@@ -32,12 +32,14 @@ async function createUser(req, res) {
 
         await userRepo.save(newUser);
 
-        return res.status(200).json(newUser.toJSON())
+        return res.status(200).json({
+            message:"We've successfully created your account"
+        })
 
     } catch (err) {
         console.log(err)
         return res.status(400).json({
-            message: `An error was encountered`
+            error: `An error was encountered`
         })
     } finally {
         await client.close()
@@ -60,7 +62,7 @@ async function getUsers(req, res) {
     } catch (err) {
         console.log(err)
         return res.status(400).json({
-            message: `An error was encountered`
+            error: `An error was encountered`
         })
     } finally {
         await client.close()

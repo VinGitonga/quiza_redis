@@ -18,6 +18,7 @@ import {
     RadioGroup,
     Radio,
     Link,
+    useToast,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { RiLoginCircleFill } from "react-icons/ri";
@@ -28,6 +29,7 @@ import { register } from "../services/auth";
 
 export default function Register() {
     const router = useRouter();
+    const toast = useToast();
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -49,11 +51,25 @@ export default function Register() {
         setLoading(true);
         register(userInfo)
             .then((resp) => {
-                console.log(resp);
-                setLoading(false);
-                router.push("/login");
+                if (resp?.message) {
+                    toast({
+                        title: "Success",
+                        description: resp?.message,
+                        status: "success",
+                        duration: 9000,
+                        isClosable: true,
+                    });
+                    router.push("/login");
+                } else {
+                    toast({
+                        title: "Error",
+                        description: resp?.error,
+                        status: "error",
+                        duration: 9000,
+                        isClosable: true,
+                    });
+                }
             })
-            .catch((err) => console.log(err))
             .finally(() => setLoading(false));
     };
 

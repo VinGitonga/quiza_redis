@@ -40,7 +40,7 @@ export default NextAuth({
                     }
                 } catch (err) {
                     console.log(err)
-                    throw new Error('An error was encountered')
+                    throw new Error(err)
                 } finally {
                     await client.close()
                 }

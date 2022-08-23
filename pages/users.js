@@ -9,19 +9,19 @@ import {
     Tag,
 } from "@chakra-ui/react";
 import Card from "../components/Card";
-import Navbar from "../components/Navbar";
+import Layout from "../components/Layout";
 import { IoEyeSharp } from "react-icons/io5";
 import useSWR from "swr";
 import axios from "axios";
+import {useRouter} from 'next/router'
 
 const fetcher = (url) => axios.get(url, fetcher).then((resp) => resp.data);
 
-const Users = () => {
+export default function Users () {
     const { data: users } = useSWR("/api/user", fetcher);
 
     return (
         <Box px={8} style={{ fontFamily: "Poppins" }}>
-            <Navbar />
             <Heading py={5}>Users</Heading>
             <Card>
                 {users?.map((user) => (
@@ -33,6 +33,7 @@ const Users = () => {
 };
 
 const UserItem = ({ user }) => {
+    const router = useRouter()
     return (
         <Box mb={6}>
             <Flex alignItems={"center"} justifyContent={"space-between"}>
@@ -76,6 +77,17 @@ const UserItem = ({ user }) => {
                         icon={<IoEyeSharp />}
                         isRound
                         bg={"cyan.100"}
+                        onClick={() => {
+                            router.push(
+                                {
+                                    pathname: "/userprofile",
+                                    query: {
+                                        userId: user?.entityId,
+                                    },
+                                },
+                                "/userprofile"
+                            )
+                        }}
                     />
                 </Tooltip>
             </Flex>
@@ -91,4 +103,10 @@ const UserItem = ({ user }) => {
     );
 };
 
-export default Users;
+Users.getLayout = function getLayout(page){
+    return (
+        <Layout>
+            {page}
+        </Layout>
+    )
+}

@@ -2,14 +2,14 @@ import { useEffect, useState } from "react";
 import { Heading, Box, SimpleGrid, GridItem } from "@chakra-ui/react";
 import Info from "../components/quiz/Info";
 import Questions from "../components/quiz/Questions";
-import Navbar from "../components/Navbar";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 import axios from "axios";
+import Layout from "../components/Layout"
 
 const fetcher = (url) => axios.get(url).then((resp) => resp.data);
 
-const QuizDetails = () => {
+export default function QuizDetails (){
     const router = useRouter();
     const [quizId, setQuizId] = useState("");
 
@@ -24,7 +24,6 @@ const QuizDetails = () => {
 
     return (
         <Box px={8} style={{ fontFamily: "Poppins" }}>
-            <Navbar />
             <Heading py={5}>Quiz Details</Heading>
             <Box py={2} mx="auto">
                 <SimpleGrid
@@ -47,4 +46,10 @@ const QuizDetails = () => {
     );
 };
 
-export default QuizDetails;
+QuizDetails.getLayout = function getLayout(page){
+    return (
+        <Layout>
+            {page}
+        </Layout>
+    )
+}

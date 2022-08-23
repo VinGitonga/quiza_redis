@@ -8,11 +8,18 @@ import {
     Text,
 } from "@chakra-ui/react";
 import Card from "../components/Card";
-import { useSession } from "next-auth/react";
-import Layout from "../components/Layout"
+import Layout from "../components/Layout";
+import axios from "axios";
+import useSWR from "swr";
+import { useRouter } from "next/router";
 
-export default function Profile(){
-    const { data } = useSession();
+const fetcher = (url) => axios.get(url).then((res) => res.data);
+
+export default function UserProfile () {
+    const router = useRouter();
+    const { userId } = router.query;
+
+    const { data } = useSWR(`/api/user/details/${userId}`, fetcher);
 
     return (
         <Box px={8} style={{ fontFamily: "Poppins" }}>
@@ -30,11 +37,11 @@ export default function Profile(){
                                 <Avatar
                                     size={"2xl"}
                                     mr={5}
-                                    src={`https://avatars.dicebear.com/api/adventurer/${data?.user?.name
+                                    src={`https://avatars.dicebear.com/api/adventurer/${data?.name
                                         .toLowerCase()
                                         .replaceAll(" ", "")}.svg`}
                                 />
-                                <Heading>{data?.user?.name}</Heading>
+                                <Heading>{data?.name}</Heading>
                             </Flex>
                         </Card>
                     </GridItem>
@@ -54,7 +61,7 @@ export default function Profile(){
                                         Name
                                     </Text>
                                     <Text color={"gray.900"} fontSize={"md"}>
-                                    {data?.user?.name}
+                                        {data?.name}
                                     </Text>
                                 </Box>
                                 <Box mx={2}>
@@ -67,7 +74,7 @@ export default function Profile(){
                                         Email
                                     </Text>
                                     <Text color={"gray.900"} fontSize={"md"}>
-                                    {data?.user?.email}
+                                        {data?.email}
                                     </Text>
                                 </Box>
                                 <Box mx={2}>
@@ -80,7 +87,9 @@ export default function Profile(){
                                         Role
                                     </Text>
                                     <Text color={"gray.900"} fontSize={"md"}>
-                                    {data?.user?.isAdmin ? "Administrator" : "Student"}
+                                        {data?.isAdmin
+                                            ? "Administrator"
+                                            : "Student"}
                                     </Text>
                                 </Box>
                                 <Box mx={2}>
@@ -118,7 +127,7 @@ export default function Profile(){
     );
 };
 
-Profile.getLayout = function getLayout(page){
+UserProfile.getLayout = function getLayout(page){
     return (
         <Layout>
             {page}

@@ -41,6 +41,8 @@ export default function Navbar() {
         router.push(result.url);
     };
 
+
+
     return (
         <Box shadow="md" fontFamily={"Poppins"}>
             <chakra.header

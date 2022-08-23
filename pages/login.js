@@ -17,21 +17,22 @@ import {
     InputRightElement,
     Icon,
     IconButton,
+    useToast,
 } from "@chakra-ui/react";
 import { RiLoginCircleFill } from "react-icons/ri";
 import { HiOutlineMail } from "react-icons/hi";
 import { BiLock } from "react-icons/bi";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import { useRouter } from "next/router";
-import { signIn } from "next-auth/react"
+import { signIn } from "next-auth/react";
 
 export default function Login() {
     const router = useRouter();
+    const toast = useToast();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
     const [showPass, setShowPass] = useState(false);
-
 
     const handleShowPass = () => setShowPass(!showPass);
 
@@ -44,15 +45,33 @@ export default function Login() {
     const clickSubmit = async () => {
         setLoading(true);
 
-        await signIn('credentials', {
+        await signIn("credentials", {
             redirect: false,
             email: email,
-            password: password
-        }).then((data) => {
-            resetForm()
-            console.log(data)
-            router.replace('/profile')
+            password: password,
         })
+            .then(({ ok, error }) => {
+                if (ok) {
+                    resetForm();
+                    toast({
+                        title: "Success",
+                        description: "Login success",
+                        status: "success",
+                        duration: 9000,
+                        isClosable: true,
+                    });
+                    router.replace("/profile");
+                } else {
+                    toast({
+                        title: "Error",
+                        description: error,
+                        status: "error",
+                        duration: 9000,
+                        isClosable: true,
+                    });
+                }
+            })
+            .finally(() => setLoading(false));
     };
 
     return (

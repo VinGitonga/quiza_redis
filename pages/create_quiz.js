@@ -15,18 +15,18 @@ import {
     SliderFilledTrack,
     SliderThumb,
     SliderMark,
-    useToast
+    useToast,
 } from "@chakra-ui/react";
 import { FiEdit3 } from "react-icons/fi";
 import { MdGraphicEq } from "react-icons/md";
-import Navbar from "../components/Navbar";
 import { createQuiz } from "../services/quiz";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/router"
+import { useRouter } from "next/router";
+import Layout from "../components/Layout";
 
 export default function CreateQuiz() {
-    const router = useRouter()
-    const toast = useToast()
+    const router = useRouter();
+    const toast = useToast();
     const [duration, setDuration] = useState(10);
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
@@ -52,7 +52,7 @@ export default function CreateQuiz() {
 
         createQuiz(quiz)
             .then((data) => {
-                if (data.message){
+                if (data?.message) {
                     resetForm();
                     toast({
                         title: "Success",
@@ -61,10 +61,13 @@ export default function CreateQuiz() {
                         duration: 9000,
                         isClosable: true,
                     });
-                    router.push({
-                        pathname: "/quiz_detail",
-                        query: { quizId: data?.quizId },
-                    });
+                    router.push(
+                        {
+                            pathname: "/quiz_detail",
+                            query: { quizId: data?.quizId },
+                        },
+                        "/quiz_detail"
+                    )
                 } else {
                     toast({
                         title: "Error",
@@ -81,7 +84,6 @@ export default function CreateQuiz() {
 
     return (
         <Box>
-            <Navbar />
             <Flex
                 justify={"center"}
                 align={"flex-start"}
@@ -167,3 +169,7 @@ export default function CreateQuiz() {
         </Box>
     );
 }
+
+CreateQuiz.getLayout = function getLayout(page) {
+    return <Layout>{page}</Layout>;
+};

@@ -24,7 +24,7 @@ async function reset(req, res) {
     } catch (err) {
         console.log(err);
         return res.status(200).json({
-            message: "An error has been encountered",
+            error: "An error has been encountered",
         });
     } finally {
         await client.close();

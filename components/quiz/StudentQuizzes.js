@@ -11,7 +11,6 @@ import {
     Tooltip,
 } from "@chakra-ui/react";
 import Card from "../Card";
-import Navbar from "../Navbar";
 import { CgTrash } from "react-icons/cg";
 import { FiEdit3 } from "react-icons/fi";
 import { useRouter } from "next/router";
@@ -24,7 +23,6 @@ const StudentQuizzes = ({ quizzes }) => {
 
     return (
         <Box px={8}>
-            <Navbar />
             <Heading py={5}>My Quizzes</Heading>
             <Card>
                 {quizzes?.length === 0 ? (
@@ -55,10 +53,10 @@ const QuizItem = ({ quiz, user }) => {
             setShowConfirmModal(false);
             router.push(
                 {
-                    pathname: "/quiza",
+                    pathname: "/take_quiz",
                     query: { quizId: quiz.entityId },
                 },
-                "/quiza"
+                "/take_quiz"
             )
         });
     };

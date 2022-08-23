@@ -16,9 +16,9 @@ import {
     useToast
 } from "@chakra-ui/react";
 import { FiEdit3 } from "react-icons/fi";
-import Navbar from "../components/Navbar";
 import { useRouter } from "next/router";
 import { createQuestion } from "../services/question";
+import Layout from "../components/Layout"
 
 export default function CreateQuestion() {
     const router = useRouter();
@@ -84,7 +84,6 @@ export default function CreateQuestion() {
 
     return (
         <Box>
-            <Navbar />
             <Flex
                 justify={"center"}
                 align={"flex-start"}
@@ -207,4 +206,12 @@ export default function CreateQuestion() {
             </Flex>
         </Box>
     );
+}
+
+CreateQuestion.getLayout = function getLayout(page){
+    return (
+        <Layout>
+            {page}
+        </Layout>
+    )
 }
