@@ -14,11 +14,12 @@ import { BsClipboardData } from "react-icons/bs";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 import axios from "axios";
-import Layout from "../components/Layout"
+import Layout from "../components/Layout";
+import Head from "next/head"
 
 const fetcher = (url) => axios.get(url).then((res) => res.data);
 
-export default function MySubmissions(){
+export default function MySubmissions() {
     const { data: attempts } = useSWR("/api/quiz/submissions", fetcher);
     console.log(attempts);
 
@@ -38,26 +39,57 @@ export default function MySubmissions(){
             </Card>
         </Box>
     );
-};
+}
 
 const QuizItem = ({ attempt }) => {
     const router = useRouter();
 
     return (
         <Box mb={6}>
+            <Head>
+                <title>Quiza | My Submissions</title>
+            </Head>
             <Flex alignItems={"center"} justifyContent={"space-between"}>
                 <Flex alignItems={"center"}>
-                    <Avatar size="xl" mr={5} src={"https://source.unsplash.com/random"} />
+                    <Avatar
+                        size="xl"
+                        mr={5}
+                        src={"https://source.unsplash.com/random"}
+                    />
                     {/* To add a push state */}
-                    <Text
-                        fontSize={"3xl"}
-                        _hover={{
-                            borderBottom: "2px solid #4299E1",
-                        }}
-                        cursor={"pointer"}
+                    <Flex
+                        alignItems={"flex-start"}
+                        justifyContent={"space-between"}
+                        flexDirection={"column"}
                     >
-                        {attempt?.quizTitle}
-                    </Text>
+                        <Text
+                            fontSize={"3xl"}
+                            _hover={{
+                                borderBottom: "2px solid #4299E1",
+                            }}
+                            cursor={"pointer"}
+                        >
+                            {attempt?.quizTitle}
+                        </Text>
+                        <Text
+                            fontSize={"md"}
+                            color={"gray.500"}
+                            cursor="pointer"
+                            onClick={() =>
+                                router.push(
+                                    {
+                                        pathname: "/quiz_leaderboard",
+                                        query: {
+                                            quizId: attempt?.quizId,
+                                        },
+                                    },
+                                    "/quiz_leaderboard"
+                                )
+                            }
+                        >
+                            View Quiz Leaderboard
+                        </Text>
+                    </Flex>
                 </Flex>
                 <Tag
                     display={{ base: "none", lg: "flex" }}
@@ -107,10 +139,6 @@ const QuizItem = ({ attempt }) => {
     );
 };
 
-MySubmissions.getLayout = function getLayout(page){
-    return (
-        <Layout>
-            {page}
-        </Layout>
-    )
-}
+MySubmissions.getLayout = function getLayout(page) {
+    return <Layout>{page}</Layout>;
+};

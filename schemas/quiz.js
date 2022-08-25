@@ -28,7 +28,9 @@ const quizSchema = new Schema(Quiz, {
     authorId: { type: 'string' },
     quizTaken: { type: 'string[]' }, // array of quizTake ids who took the quiz, quizTaken has quizId, UserId, score, responses
     usersEnrolled: { type: 'string[]' }, // ensure to initiate as empty array []
-    createdAt: { type: 'date' }
+    createdAt: { type: 'date' },
+    scheduledFor: { type: 'date' },
+    quizType: { type: 'string' } // quiz type can be private or public, for private they use a quizCode to join
 }, {
     prefix: 'quiza:redis-om-node:quiz'
 });

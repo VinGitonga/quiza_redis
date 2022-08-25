@@ -15,6 +15,7 @@ const register = async (userData) => {
         return resp.data;
     } catch (err) {
         console.log(err);
+        return err.response.data
     }
 };
 

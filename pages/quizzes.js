@@ -20,6 +20,7 @@ import useSWR from "swr";
 import axios from "axios";
 import ConfirmDialog from "../components/common/ConfirmDialog";
 import Layout from "../components/Layout"
+import Head from "next/head"
 
 const isEnrolled = (allUsersEnrolled, currentUserId) =>
     allUsersEnrolled.includes(currentUserId);
@@ -33,7 +34,10 @@ export default function Quizes () {
 
     return (
         <Box px={8}>
-            <Heading py={5}>Quizzas</Heading>
+            <Heading py={5}>Public Quizzes</Heading>
+            <Head>
+                <title>Quiza | Public Quizzes</title>
+            </Head>
             <Card>
                 {quizzes?.length === 0 ? (
                     <Text>

@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 import axios from "axios";
 import Layout from "../components/Layout"
+import Head from "next/head"
 
 const fetcher = (url) => axios.get(url).then((resp) => resp.data);
 
@@ -24,6 +25,9 @@ export default function QuizDetails (){
 
     return (
         <Box px={8} style={{ fontFamily: "Poppins" }}>
+            <Head>
+                <title>Quiza | Quiz Details</title>
+            </Head>
             <Heading py={5}>Quiz Details</Heading>
             <Box py={2} mx="auto">
                 <SimpleGrid

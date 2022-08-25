@@ -10,7 +10,7 @@ export default async function handler(req, res) {
 }
 
 async function reset(req, res) {
-    const redis = createClient("redis://localhost:6379");
+    const redis = createClient(process.env.REDIS_URL);
     await redis.connect();
     const session = await getSession({ req });
 

@@ -8,12 +8,16 @@ import {
 import { FaUserCog } from "react-icons/fa";
 import { RiLoginCircleLine } from "react-icons/ri";
 import { useRouter } from "next/router";
+import Head from "next/head"
 
 const Landing = () => {
     const router = useRouter();
 
     return (
         <Box pos="relative" overflow="hidden" bg={"#1a202c"} h={"100vh"}>
+            <Head>
+                <title>Quiza | Home</title>
+            </Head>
             <Box maxW="7xl" mx="auto">
                 <Box
                     pos="relative"

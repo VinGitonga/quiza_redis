@@ -26,6 +26,7 @@ import {
 
 import useSWR from "swr";
 import axios from "axios";
+import Head from "next/head"
 
 const fetcher = (url) => axios.get(url).then((res) => res.data);
 
@@ -47,6 +48,9 @@ export default function Results (){
 
     return (
         <Box px={8} style={{ fontFamily: "Poppins" }}>
+            <Head>
+                <title>Quiza | Results</title>
+            </Head>
             <Heading py={5}>Results</Heading>
             {loading ? (
                 <Loader />

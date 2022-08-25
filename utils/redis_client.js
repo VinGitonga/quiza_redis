@@ -7,7 +7,7 @@ class RedisClient {
     }
 
     async initClient(){
-        await this.client.open('redis://localhost:6379')
+        await this.client.open(process.env.REDIS_URL)
         return this.client
     }
 

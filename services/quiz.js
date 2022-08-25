@@ -64,14 +64,28 @@ export const enrollToQuiz = async (quizId, userId) => {
     }
 }
 
-export const startQuiz = async (quizId, userId) => {
+export const enrollToQuizCode = async (quizCode) => {
     try {
-        let resp = await axios.patch(`${BASE_URL}/quiz/start/${quizId}/${userId}`);
+        let resp = await axios.patch(`${BASE_URL}/quiz/enroll_private/${quizCode}`);
 
         return resp.data;
 
     } catch (err) {
-        console.log(err)
+        console.log(err.response.data)
+        return err.response.data
+    }
+}
+
+export const startQuiz = async (quizId, userId) => {
+    try {
+        let resp = await axios.patch(`${BASE_URL}/quiz/start/${quizId}/${userId}`);
+        console.log(resp)
+
+        return resp.data
+
+    } catch (err) {
+        console.log(err.response.data)
+        return err.response.data
     }
 }
 

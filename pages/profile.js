@@ -10,12 +10,16 @@ import {
 import Card from "../components/Card";
 import { useSession } from "next-auth/react";
 import Layout from "../components/Layout"
+import Head from "next/head"
 
 export default function Profile(){
     const { data } = useSession();
 
     return (
         <Box px={8} style={{ fontFamily: "Poppins" }}>
+            <Head>
+                <title>Quiza | My Profile</title>
+            </Head>
             <Heading py={5}>Profile</Heading>
             <Box py={2} mx="auto">
                 <SimpleGrid

@@ -22,6 +22,7 @@ import { useSession } from "next-auth/react";
 import axios from "axios";
 import useSWR from "swr";
 import { submitQuiz, resetQuiz } from "../services/quiz";
+import Head from "next/head"
 
 const fetcher = (url) => axios.get(url).then((res) => res.data);
 
@@ -185,6 +186,9 @@ export default function Quiz (){
 
     return (
         <Box fontFamily={"Poppins"}>
+            <Head>
+                <title>Quiza | Take Quiz</title>
+            </Head>
             <Flex
                 justify={"center"}
                 align={"flex-start"}

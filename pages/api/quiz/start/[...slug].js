@@ -11,8 +11,6 @@ import {
 
 export default async function handler(req, res) {
     switch (req.method) {
-        case "GET":
-            return getResponses(req, res);
         case "PATCH":
             return startQuiz(req, res);
         case "POST":
@@ -26,7 +24,7 @@ async function startQuiz(req, res) {
     const quizId = slug[0];
     const userId = slug[1];
 
-    const redis = createClient("redis://localhost:6379");
+    const redis = createClient(process.env.REDIS_URL);
     await redis.connect();
 
     const client = await new Client().use(redis);
@@ -55,6 +53,13 @@ async function startQuiz(req, res) {
             });
         }
 
+        // Confirm if the quiz has started 
+        if (new Date(quiz.scheduledFor) >= Date.now()){
+            return res.status(400).json({
+                error:'Quiz has not started yet!'
+            })
+        }
+
         /**
          * Save the questions in redis cache database
          */
@@ -73,21 +78,14 @@ async function startQuiz(req, res) {
          *
          */
 
-        let data = questions.map((item) => ({
-            quizId: item.quizId,
-            description: item.description,
-            options: item.options,
-            questionId: item.entityId,
-        }));
 
-        await res.status(200).json({
-            questions: data,
-            duration: quiz.duration,
+        return res.status(200).json({
+            message: `Quiz started for ${user.name}`
         });
     } catch (err) {
         console.log(err);
         return res.status(400).json({
-            error: "An error was encountered",
+            error: err,
         });
     } finally {
         await redis.disconnect();
@@ -100,7 +98,7 @@ async function markQuiz(req, res) {
     const quizId = slug[0];
     const userId = slug[1];
 
-    const redis = createClient("redis://localhost:6379");
+    const redis = createClient(process.env.REDIS_URL);
     await redis.connect();
 
     const client = await new Client().use(redis);
@@ -169,6 +167,7 @@ async function markQuiz(req, res) {
             attemptId: attemptId,
             responses: responsesId,
             quizTitle: quiz.title,
+            userName: user.name,
         });
 
         await quizTakenRepo.save(newQuizTaken);

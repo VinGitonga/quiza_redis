@@ -10,43 +10,55 @@ import {
 } from "@chakra-ui/react";
 import Card from "../components/Card";
 import Layout from "../components/Layout";
-import { IoEyeSharp } from "react-icons/io5";
+import { BsClipboardData } from "react-icons/bs";
 import useSWR from "swr";
 import axios from "axios";
 import { useRouter } from "next/router";
-import Head from "next/head";
+import { useSession } from "next-auth/react";
+import Head from 'next/head'
 
 const fetcher = (url) => axios.get(url, fetcher).then((resp) => resp.data);
 
-export default function Users() {
-    const { data: users } = useSWR("/api/user", fetcher);
+const getPercentageScore = (score, totalResponses) =>
+    (score / totalResponses) * 100;
+
+export default function QuizLeaderBoard() {
+    const router = useRouter();
+    const { quizId } = router.query;
+    console.log(router.query)
+    const { data: users } = useSWR(`/api/quiz/submissions/leaderboard/${quizId}`, fetcher);
+    console.log(users)
+    const { data } = useSession;
 
     return (
         <Box px={8} style={{ fontFamily: "Poppins" }}>
+            <Head>
+                <title>Quiza | Leaderboard</title>
+            </Head>
             <Heading py={5}>Users</Heading>
             <Card>
-                {users?.map((user) => (
-                    <UserItem key={user?.entityId} user={user} />
+                {users?.map((quizParticipant) => (
+                    <UserItem
+                        key={quizParticipant?.entityId}
+                        user={quizParticipant}
+                        isLoggedInUserAdmin={data?.user?.isAdmin}
+                    />
                 ))}
             </Card>
         </Box>
     );
 }
 
-const UserItem = ({ user }) => {
+const UserItem = ({ user, isLoggedInUserAdmin }) => {
     const router = useRouter();
     return (
         <Box mb={6}>
-            <Head>
-                <title>Quiza | Users</title>
-            </Head>
             <Flex alignItems={"center"} justifyContent={"space-between"}>
                 <Flex alignItems={"center"}>
                     <Avatar
                         size="lg"
                         mr={5}
-                        src={`https://avatars.dicebear.com/api/adventurer/${user?.name
-                            .toLowerCase()
+                        src={`https://avatars.dicebear.com/api/adventurer/${user?.userName?.toLowerCase()
                             .replaceAll(" ", "")}.svg`}
                     />
                     {/* To add a push state */}
@@ -55,9 +67,12 @@ const UserItem = ({ user }) => {
                         justifyContent={"space-between"}
                         flexDirection={"column"}
                     >
-                        <Text fontSize={"xl"}>{user?.name}</Text>
+                        <Text fontSize={"xl"}>{user?.userName}</Text>
                         <Text fontSize={"md"} color={"gray.500"}>
-                            {user?.email}
+                            {`${getPercentageScore(
+                                user?.score,
+                                user?.responses?.length
+                            )}%`}
                         </Text>
                     </Flex>
                 </Flex>
@@ -68,28 +83,29 @@ const UserItem = ({ user }) => {
                     size="lg"
                     borderRadius={"full"}
                 >
-                    {user?.isAdmin ? "Administrator" : "Student"}
+                    {user?.quizTitle}
                 </Tag>
                 <Tooltip
-                    label={"View Profile"}
+                    label={"View Attempt"}
                     hasArrow
                     placement={"top"}
                     bg={"teal"}
                 >
                     <IconButton
                         size={"md"}
-                        icon={<IoEyeSharp />}
+                        icon={<BsClipboardData />}
                         isRound
                         bg={"cyan.100"}
+                        disabled={!isLoggedInUserAdmin}
                         onClick={() => {
                             router.push(
                                 {
-                                    pathname: "/userprofile",
+                                    pathname: "/results",
                                     query: {
-                                        userId: user?.entityId,
+                                        userId: user?.attemptId,
                                     },
                                 },
-                                "/userprofile"
+                                "/results"
                             );
                         }}
                     />
@@ -107,6 +123,6 @@ const UserItem = ({ user }) => {
     );
 };
 
-Users.getLayout = function getLayout(page) {
+QuizLeaderBoard.getLayout = function getLayout(page) {
     return <Layout>{page}</Layout>;
 };

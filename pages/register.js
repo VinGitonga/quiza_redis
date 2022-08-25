@@ -26,6 +26,7 @@ import { FiUser, FiEye, FiEyeOff } from "react-icons/fi";
 import { HiOutlineMail } from "react-icons/hi";
 import { BiLock } from "react-icons/bi";
 import { register } from "../services/auth";
+import Head from "next/head"
 
 export default function Register() {
     const router = useRouter();
@@ -81,6 +82,9 @@ export default function Register() {
             bg={useColorModeValue("gray.50", "gray.800")}
             fontFamily={"Poppins"}
         >
+        <Head>
+                <title>Quiza | Register</title>
+            </Head>
             <Stack spacing={8} mx={"auto"} w={"600px"}>
                 <Stack align={"center"}>
                     <Heading fontSize={"4xl"}>Get Started with Quiza</Heading>

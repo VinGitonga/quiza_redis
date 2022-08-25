@@ -25,6 +25,7 @@ import { BiLock } from "react-icons/bi";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import { useRouter } from "next/router";
 import { signIn } from "next-auth/react";
+import Head from "next/head"
 
 export default function Login() {
     const router = useRouter();
@@ -82,6 +83,9 @@ export default function Login() {
             bg={useColorModeValue("gray.50", "gray.800")}
             fontFamily={"Poppins"}
         >
+            <Head>
+                <title>Quiza | Login</title>
+            </Head>
             <Stack spacing={8} mx={"auto"} w={"450px"}>
                 <Stack align={"center"}>
                     <Heading fontSize={"4xl"}>Welcome Back</Heading>

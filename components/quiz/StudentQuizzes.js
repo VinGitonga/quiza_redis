@@ -9,6 +9,7 @@ import {
     Avatar,
     HStack,
     Tooltip,
+    useToast,
 } from "@chakra-ui/react";
 import Card from "../Card";
 import { CgTrash } from "react-icons/cg";
@@ -17,6 +18,7 @@ import { useRouter } from "next/router";
 import { startQuiz } from "../../services/quiz";
 import ConfirmDialog from "../common/ConfirmDialog";
 import { useSession } from "next-auth/react";
+import Countdown from "../Countdown";
 
 const StudentQuizzes = ({ quizzes }) => {
     const { data: session } = useSession();
@@ -26,13 +28,15 @@ const StudentQuizzes = ({ quizzes }) => {
             <Heading py={5}>My Quizzes</Heading>
             <Card>
                 {quizzes?.length === 0 ? (
-                    <Text>
-                        You haven&apos;t enrolled to any quizzes yet.
-                    </Text>
+                    <Text>You haven&apos;t enrolled to any quizzes yet.</Text>
                 ) : (
                     <>
                         {quizzes?.map((quiz) => (
-                            <QuizItem key={quiz?.entityId} quiz={quiz} user={session?.user} />
+                            <QuizItem
+                                key={quiz?.entityId}
+                                quiz={quiz}
+                                user={session?.user}
+                            />
                         ))}
                     </>
                 )}
@@ -43,29 +47,54 @@ const StudentQuizzes = ({ quizzes }) => {
 
 const QuizItem = ({ quiz, user }) => {
     const router = useRouter();
+    const toast = useToast();
     const [showConfirmModal, setShowConfirmModal] = useState(false);
     const [loading, setLoading] = useState(false);
 
-
     const start = () => {
-        startQuiz(quiz?.entityId, user?.id).then((data) => {
-            setLoading(false);
-            setShowConfirmModal(false);
-            router.push(
-                {
-                    pathname: "/take_quiz",
-                    query: { quizId: quiz.entityId },
-                },
-                "/take_quiz"
-            )
-        });
+        startQuiz(quiz.entityId, user.id)
+            .then((data) => {
+                if (data?.error) {
+                    toast({
+                        title: "Error",
+                        description: data?.error,
+                        status: "error",
+                        duration: 9000,
+                        isClosable: true,
+                    });
+                } else {
+                    setShowConfirmModal(false);
+                    toast({
+                        title: "Success",
+                        description: data?.message,
+                        status: "success",
+                        duration: 9000,
+                        isClosable: true,
+                    });
+                    router.push(
+                        {
+                            pathname: "/take_quiz",
+                            query: { quizId: quiz.entityId },
+                        },
+                        "/take_quiz"
+                    );
+                }
+            }).catch(err => console.log(err))
+            .finally(() => {
+                setLoading(false)
+                setShowConfirmModal(false);
+            });
     };
 
     return (
         <Box mb={6}>
             <Flex alignItems={"center"} justifyContent={"space-between"}>
                 <Flex alignItems={"center"}>
-                    <Avatar size="xl" mr={5} src={"https://source.unsplash.com/random"} />
+                    <Avatar
+                        size="xl"
+                        mr={5}
+                        src={"https://source.unsplash.com/random"}
+                    />
                     {/* To add a push state */}
                     <Text
                         fontSize={"3xl"}
@@ -77,6 +106,12 @@ const QuizItem = ({ quiz, user }) => {
                         {quiz?.title}
                     </Text>
                 </Flex>
+                <Countdown
+                    title={"Time Remaining for quiz to Start"}
+                    isQuizCountdown={false}
+                    totalTime={quiz?.scheduledFor}
+                    onComplete={() => {}}
+                />
                 <Tag
                     display={{ base: "none", lg: "flex" }}
                     bg={"teal.400"}
@@ -98,7 +133,7 @@ const QuizItem = ({ quiz, user }) => {
                             icon={<FiEdit3 />}
                             isRound
                             bg={"gray.300"}
-                            onClick={() =>setShowConfirmModal(true)}
+                            onClick={() => setShowConfirmModal(true)}
                         />
                     </Tooltip>
                     <Tooltip

@@ -19,6 +19,7 @@ import { FiEdit3 } from "react-icons/fi";
 import { useRouter } from "next/router";
 import { createQuestion } from "../services/question";
 import Layout from "../components/Layout"
+import Head from 'next/head'
 
 export default function CreateQuestion() {
     const router = useRouter();
@@ -84,6 +85,9 @@ export default function CreateQuestion() {
 
     return (
         <Box>
+            <Head>
+                <title>Quiza | Create Question</title>
+            </Head>
             <Flex
                 justify={"center"}
                 align={"flex-start"}

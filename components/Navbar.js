@@ -20,18 +20,22 @@ import {
     MenuItem,
     MenuButton,
     MenuList,
+    Button,
 } from "@chakra-ui/react";
 import { AiOutlineMenu, AiOutlineSearch, AiFillBell } from "react-icons/ai";
 import { useRouter } from "next/router";
 import { SiSwarm } from "react-icons/si";
 import { RiUserHeartFill, RiLogoutCircleFill } from "react-icons/ri";
 import { useSession, signOut } from "next-auth/react";
+import JoinQuiz from "./common/JoinQuiz";
+import { useState } from "react";
 
 export default function Navbar() {
     const bg = useColorModeValue("white", "gray.800");
     const mobileNav = useDisclosure();
     const router = useRouter();
     const { data } = useSession();
+    const [open, setOpen] = useState(false);
 
     const logout = async () => {
         const result = await signOut({
@@ -41,10 +45,9 @@ export default function Navbar() {
         router.push(result.url);
     };
 
-
-
     return (
         <Box shadow="md" fontFamily={"Poppins"}>
+            <JoinQuiz open={open} setOpen={setOpen} />
             <chakra.header
                 bg={bg}
                 borderColor="gray.600"
@@ -82,20 +85,11 @@ export default function Navbar() {
                         <chakra.h1 fontSize="xl">Quiza</chakra.h1>
                     </HStack>
                     <HStack spacing={3} display="flex" alignItems="center">
-                        <chakra.a
-                            p={3}
-                            color={useColorModeValue("gray.800", "inherit")}
-                            rounded="sm"
-                            _hover={{
-                                color: useColorModeValue(
-                                    "gray.800",
-                                    "gray.600"
-                                ),
-                            }}
-                        >
-                            <AiFillBell />
-                            <VisuallyHidden>Notifications</VisuallyHidden>
-                        </chakra.a>
+                        {!data?.user?.isAdmin && (
+                            <Button onClick={() => setOpen(true)}>
+                                Join Quiz
+                            </Button>
+                        )}
                         <Menu>
                             <MenuButton
                                 as={Avatar}

@@ -16,6 +16,9 @@ import {
     SliderThumb,
     SliderMark,
     useToast,
+    Alert,
+    AlertIcon,
+    Select,
 } from "@chakra-ui/react";
 import { FiEdit3 } from "react-icons/fi";
 import { MdGraphicEq } from "react-icons/md";
@@ -23,6 +26,7 @@ import { createQuiz } from "../services/quiz";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import Layout from "../components/Layout";
+import Head from "next/head"
 
 export default function CreateQuiz() {
     const router = useRouter();
@@ -30,6 +34,8 @@ export default function CreateQuiz() {
     const [duration, setDuration] = useState(10);
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
+    const [scheduledFor, setScheduledFor] = useState(new Date());
+    const [quizType, setQuizType] = useState("private");
     const [loading, setLoading] = useState(false);
 
     const { data: session } = useSession();
@@ -41,6 +47,8 @@ export default function CreateQuiz() {
             duration: duration,
             description: description,
             authorId: session.user.id,
+            quizType: quizType,
+            scheduledFor: scheduledFor,
         };
 
         const resetForm = () => {
@@ -67,7 +75,7 @@ export default function CreateQuiz() {
                             query: { quizId: data?.quizId },
                         },
                         "/quiz_detail"
-                    )
+                    );
                 } else {
                     toast({
                         title: "Error",
@@ -84,6 +92,9 @@ export default function CreateQuiz() {
 
     return (
         <Box>
+            <Head>
+                <title>Quiza | Create Quiz</title>
+            </Head>
             <Flex
                 justify={"center"}
                 align={"flex-start"}
@@ -147,7 +158,35 @@ export default function CreateQuiz() {
                                     </SliderThumb>
                                 </Slider>
                             </FormControl>
-                            <Stack spacing={10} mt={8}>
+                            <FormControl id="scheduledFor">
+                                <FormLabel>Quiz Start Date and Time</FormLabel>
+                                <Input
+                                    variant={"flushed"}
+                                    color={"gray.500"}
+                                    placeholder="Select Quiz Start Date and Time"
+                                    type={"datetime-local"}
+                                    value={scheduledFor}
+                                    onChange={(e) =>
+                                        setScheduledFor(e.target.value)
+                                    }
+                                />
+                            </FormControl>
+                            <FormControl id="quizType">
+                                <FormLabel>Quiz Type</FormLabel>
+                                <Select
+                                    placeholder="Select quiz type"
+                                    onChange={(e) =>
+                                        setQuizType(e.target.value)
+                                    }
+                                    value={quizType}
+                                >
+                                    <option value={"private"}>
+                                        {"Private"}
+                                    </option>
+                                    <option value={"public"}>{"Public"}</option>
+                                </Select>
+                            </FormControl>
+                            <Stack spacing={10} my={8}>
                                 <Button
                                     bg={"blue.400"}
                                     color={"white"}
@@ -162,6 +201,11 @@ export default function CreateQuiz() {
                                     Create
                                 </Button>
                             </Stack>
+                            <Alert status="info">
+                                <AlertIcon />
+                                Note That after creating the quiz you add
+                                questions
+                            </Alert>
                         </Stack>
                     </Box>
                 </Stack>

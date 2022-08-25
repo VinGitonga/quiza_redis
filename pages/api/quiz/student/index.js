@@ -12,7 +12,7 @@ export default async function handler(req, res){
 
 async function getCachedQuiz(req, res){
     const session = await getSession({req}) //using the current user session to get the userId(entityId)
-    const redis = createClient("redis://localhost:6379")
+    const redis = createClient(process.env.REDIS_URL)
     await redis.connect()
     const client = await new Client().use(redis)
 

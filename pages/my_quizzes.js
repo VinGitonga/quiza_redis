@@ -4,6 +4,7 @@ import axios from "axios";
 import AuthorQuizzes from "../components/quiz/AuthorQuizzes";
 import StudentQuizzes from "../components/quiz/StudentQuizzes";
 import Layout from "../components/Layout";
+import Head from "next/head"
 
 const fetcher = (url) => axios.get(url).then((resp) => resp.data);
 
@@ -18,10 +19,17 @@ export default function MyQuizzes() {
         fetcher
     );
 
-    return session?.user?.isAdmin ? (
-        <AuthorQuizzes quizzes={quizzes} />
-    ) : (
-        <StudentQuizzes quizzes={quizzes} />
+    return (
+        <>
+            <Head>
+                <title>Quiza | My Quizzes</title>
+            </Head>
+            {session?.user?.isAdmin ? (
+                <AuthorQuizzes quizzes={quizzes} />
+            ) : (
+                <StudentQuizzes quizzes={quizzes} />
+            )}
+        </>
     );
 }
 
