@@ -1,7 +1,7 @@
 import RedisClient from "../../../../utils/redis_client";
 import { QuestionSchema } from "../../../../schemas";
 
-export default async function (req, res) {
+export default async function handler (req, res) {
     switch (req.method) {
         case "PUT":
             return updateQuestion(req, res);
