@@ -45,6 +45,8 @@ async function getResponses(req, res) {
         responses = responses.map((item) => item.toJSON());
         attemptInfo.responses = responses;
 
+        console.log(attemptInfo)
+
         return res.status(200).json(attemptInfo);
     } catch (err) {
         console.log(err);

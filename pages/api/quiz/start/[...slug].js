@@ -6,7 +6,7 @@ import {
     QuizTakenSchema,
     AttemptSchema,
 } from "../../../../schemas";
-import RedisClient from "../../../../utils/redis_client"
+import RedisClient from "../../../../utils/redis_client";
 
 export default async function handler(req, res) {
     switch (req.method) {
@@ -23,11 +23,11 @@ async function startQuiz(req, res) {
     const quizId = slug[0];
     const userId = slug[1];
 
-    console.log(process.env.REDIS_URL)
+    console.log(process.env.REDIS_URL);
 
     const redis = new RedisClient();
     const client = await redis.initClient();
-    
+
     const quizRepo = client.fetchRepository(QuizSchema);
     const userRepo = client.fetchRepository(UserSchema);
     const questionRepo = client.fetchRepository(QuestionSchema);
@@ -52,11 +52,15 @@ async function startQuiz(req, res) {
             });
         }
 
-        // Confirm if the quiz has started 
-        if (new Date(quiz.scheduledFor) >= Date.now()){
+        // Confirm if the quiz has started
+
+        if (
+            new Date(quiz.scheduledFor).toISOString().replace("Z", "") >=
+            Date.now()
+        ) {
             return res.status(400).json({
-                error:'Quiz has not started yet!'
-            })
+                error: "Quiz has not started yet!",
+            });
         }
 
         /**
@@ -71,24 +75,22 @@ async function startQuiz(req, res) {
         // save the questions on redis and userId as the key
 
         // await redis.set(userId, JSON.stringify(quizData), "EX", 3600);
-        await client.execute(['SET', userId, JSON.stringify(quizData)])
+        await client.execute(["SET", userId, JSON.stringify(quizData)]);
         // add the cache expiry of a max of 1hr
-        await client.execute(['EXPIRE', userId, 3600])
+        await client.execute(["EXPIRE", userId, 3600]);
         // console.log(resp)
-
 
         /**
          * Get the questions and return them to frontend without the correct answer
          *
          */
 
-
         return res.status(200).json({
-            message: `Quiz started for ${user.name}`
+            message: `Quiz started for ${user.name}`,
         });
     } catch (err) {
         console.log(err);
-        console.log("err in slugjs")
+        console.log("err in slugjs");
         return res.status(400).json({
             error: err,
         });
@@ -136,7 +138,10 @@ async function markQuiz(req, res) {
 
     if (storedQuestions) {
         storedQuestions.forEach(async (item, i) => {
-            if (questions[i].selectedOption === item.correctAnswer) {
+            if (
+                String(questions[i].selectedOption).toLowerCase() ===
+                String(item.correctAnswer).toLowerCase()
+            ) {
                 score += 1;
             }
 
@@ -151,7 +156,6 @@ async function markQuiz(req, res) {
             });
 
             await respRepo.save(newResp);
-            
         });
 
         const responses = await respRepo
@@ -174,7 +178,7 @@ async function markQuiz(req, res) {
 
         await quizTakenRepo.save(newQuizTaken);
         // push the quizTaken id to quiz schema
-        quiz.addQuizTaken(newQuizTaken.entityId)
+        quiz.addQuizTaken(newQuizTaken.entityId);
         user.addQuizTaken(newQuizTaken.entityId);
 
         // save changes made on quiz and user
@@ -182,7 +186,7 @@ async function markQuiz(req, res) {
         await userRepo.save(user);
 
         // Remove the quizData cache
-        await client.execute(['DEL', userId])
+        await client.execute(["DEL", userId]);
 
         return res.status(200).json({
             attemptId: attemptId,
@@ -193,4 +197,3 @@ async function markQuiz(req, res) {
         });
     }
 }
-

@@ -30,6 +30,7 @@ async function getQuizDetails(req, res) {
             quizCode: quiz.quizCode,
             duration: quiz.duration,
             authorId: quiz.authorId,
+            scheduledFor: quiz?.scheduledFor,
         });
     } catch (err) {
         console.log(err);

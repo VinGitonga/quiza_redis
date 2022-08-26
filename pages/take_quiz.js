@@ -230,7 +230,7 @@ export default function Quiz (){
                                 <Stack spacing={4} direction={"column"}>
                                     {allQuestions[currentQuestion]?.options.map(
                                         (opt, i) => (
-                                            <Radio value={opt} key={i}>
+                                            <Radio value={opt} key={opt}>
                                                 {opt}
                                             </Radio>
                                         )

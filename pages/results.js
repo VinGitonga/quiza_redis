@@ -26,11 +26,11 @@ import {
 
 import useSWR from "swr";
 import axios from "axios";
-import Head from "next/head"
+import Head from "next/head";
 
 const fetcher = (url) => axios.get(url).then((res) => res.data);
 
-export default function Results (){
+export default function Results() {
     const [loading, setLoading] = useState(true);
     const router = useRouter();
     const { attemptId } = router.query;
@@ -90,15 +90,18 @@ export default function Results (){
             )}
         </Box>
     );
-};
+}
 
 const QuestionItem = ({ response }) => {
     const respIcon = (resp) => {
-        if (resp.selected === resp.correctAnswer) {
+        if (
+            String(resp?.selected).toLowerCase() ===
+            String(resp?.correctAnswer).toLowerCase()
+        ) {
             return (
                 <Icon as={IoCheckmarkDoneOutline} w={4} h={5} color={"green"} />
             );
-        } else if (resp.selected === null) {
+        } else if (String(resp?.selected) === null) {
             return (
                 <Icon as={IoWarningOutline} w={4} h={5} color={"goldenrod"} />
             );
@@ -168,10 +171,6 @@ const OptionItem = ({ resp, text }) => (
     </Stack>
 );
 
-Results.getLayout = function getLayout(page){
-    return (
-        <Layout>
-            {page}
-        </Layout>
-    )
-}
+Results.getLayout = function getLayout(page) {
+    return <Layout>{page}</Layout>;
+};

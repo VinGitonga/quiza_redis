@@ -22,6 +22,7 @@ export default function QuizDetails (){
     }, [router]);
 
     const { data: quiz } = useSWR(() => `/api/quiz/details/${quizId}`, fetcher);
+    console.log(quiz)
 
     return (
         <Box px={8} style={{ fontFamily: "Poppins" }}>

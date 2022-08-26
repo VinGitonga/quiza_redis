@@ -110,7 +110,7 @@ const QuizItem = ({ quiz, user }) => {
                 <Countdown
                     title={"Time Remaining for quiz to Start"}
                     isQuizCountdown={false}
-                    totalTime={quiz?.scheduledFor}
+                    totalTime={new Date(quiz?.scheduledFor?.replace("Z", ""))}
                     onComplete={() => {}}
                 />
                 <Tag
