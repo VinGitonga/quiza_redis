@@ -102,7 +102,7 @@ export default function Navbar() {
                             <MenuList>
                                 <MenuItem
                                     icon={<RiUserHeartFill />}
-                                    onClick={() => router.push("/myprofile")}
+                                    onClick={() => router.push("/profile")}
                                 >
                                     {data?.user?.name}
                                 </MenuItem>
