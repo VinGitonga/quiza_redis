@@ -1,5 +1,5 @@
 import axios from "axios";
-const BASE_URL = "http://localhost:3000/api/question";
+const BASE_URL = "/api/question";
 
 export const createQuestion = async (quizId, questionData) => {
     try {

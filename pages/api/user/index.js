@@ -65,7 +65,7 @@ async function createUser(req, res) {
 
 async function getUsers(req, res) {
     const client = new Client();
-    await client.open("redis://localhost:6379");
+    await client.open(process.env.REDIS_URL);
 
     try {
         const userRepo = client.fetchRepository(UserSchema);
