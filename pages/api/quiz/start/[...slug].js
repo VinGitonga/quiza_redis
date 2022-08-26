@@ -1,5 +1,3 @@
-import { Client } from "redis-om";
-import { createClient } from "redis";
 import {
     UserSchema,
     QuizSchema,
@@ -8,6 +6,7 @@ import {
     QuizTakenSchema,
     AttemptSchema,
 } from "../../../../schemas";
+import RedisClient from "../../../../utils/redis_client"
 
 export default async function handler(req, res) {
     switch (req.method) {
@@ -24,11 +23,11 @@ async function startQuiz(req, res) {
     const quizId = slug[0];
     const userId = slug[1];
 
-    const redis = createClient(process.env.REDIS_URL);
-    await redis.connect();
+    console.log(process.env.REDIS_URL)
 
-    const client = await new Client().use(redis);
-
+    const redis = new RedisClient();
+    const client = await redis.initClient();
+    
     const quizRepo = client.fetchRepository(QuizSchema);
     const userRepo = client.fetchRepository(UserSchema);
     const questionRepo = client.fetchRepository(QuestionSchema);
@@ -71,7 +70,12 @@ async function startQuiz(req, res) {
 
         // save the questions on redis and userId as the key
 
-        await redis.set(userId, JSON.stringify(quizData), "EX", 3600);
+        // await redis.set(userId, JSON.stringify(quizData), "EX", 3600);
+        await client.execute(['SET', userId, JSON.stringify(quizData)])
+        // add the cache expiry of a max of 1hr
+        await client.execute(['EXPIRE', userId, 3600])
+        // console.log(resp)
+
 
         /**
          * Get the questions and return them to frontend without the correct answer
@@ -84,11 +88,12 @@ async function startQuiz(req, res) {
         });
     } catch (err) {
         console.log(err);
+        console.log("err in slugjs")
         return res.status(400).json({
             error: err,
         });
     } finally {
-        await redis.disconnect();
+        await redis.disconnectClient();
     }
 }
 
@@ -97,11 +102,8 @@ async function markQuiz(req, res) {
 
     const quizId = slug[0];
     const userId = slug[1];
-
-    const redis = createClient(process.env.REDIS_URL);
-    await redis.connect();
-
-    const client = await new Client().use(redis);
+    const redis = new RedisClient();
+    const client = await redis.initClient();
 
     const quizRepo = client.fetchRepository(QuizSchema);
     const userRepo = client.fetchRepository(UserSchema);

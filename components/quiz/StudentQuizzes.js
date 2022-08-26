@@ -54,6 +54,7 @@ const QuizItem = ({ quiz, user }) => {
     const start = () => {
         startQuiz(quiz.entityId, user.id)
             .then((data) => {
+                console.log(data)
                 if (data?.error) {
                     toast({
                         title: "Error",

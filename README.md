@@ -1,6 +1,6 @@
-# Redis Analytics Bitmaps demo
+# Quiza
 
-Showcases how to implement analytics system using Redis Bitmaps (and other data types) in NodeJS
+Quiza is an online platform whereby organizers, administrator or even tutors can setup and schedule quizzes for their students. The students can in turn signin and take the quizes scheduled.
 
 <a href="https://github.com/redis-developer/basic-analytics-dashboard-redis-bitmaps-nodejs/blob/main/preview.png?raw=true"><img src="https://github.com/redis-developer/basic-analytics-dashboard-redis-bitmaps-nodejs/blob/main/preview-min.png?raw=true" width="100%" height="auto"></a>
 <a href="https://github.com/redis-developer/basic-analytics-dashboard-redis-bitmaps-nodejs/blob/main/preview-2.png?raw=true"><img src="https://github.com/redis-developer/basic-analytics-dashboard-redis-bitmaps-nodejs/blob/main/preview-2-min.png?raw=true" width="50%" height="auto"></a><a href="https://github.com/redis-developer/basic-analytics-dashboard-redis-bitmaps-nodejs/blob/main/preview-3.png?raw=true"><img src="https://github.com/redis-developer/basic-analytics-dashboard-redis-bitmaps-nodejs/blob/main/preview-3-min.png?raw=true" width="50%" height="auto"></a>

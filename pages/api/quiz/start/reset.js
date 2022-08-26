@@ -1,5 +1,4 @@
-import { Client } from "redis-om";
-import { createClient } from "redis";
+import RedisClient from "../../../../utils/redis_client"
 import { getSession } from "next-auth/react";
 
 export default async function handler(req, res) {
@@ -10,11 +9,10 @@ export default async function handler(req, res) {
 }
 
 async function reset(req, res) {
-    const redis = createClient(process.env.REDIS_URL);
-    await redis.connect();
+    const redis = new RedisClient()
     const session = await getSession({ req });
 
-    const client = await new Client().use(redis);
+    const client = await redis.initClient();
 
     try {
         await client.execute(["DEL", (await session).user.id.toString()]); // the quizData already saved in redis
