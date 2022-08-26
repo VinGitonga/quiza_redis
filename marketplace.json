@@ -6,7 +6,7 @@
     "type": "Full App",
     "contributed_by": "Community",
     "repo_url": "https://github.com/VinGitonga/quiza_redis",
-    "download_url": "https://github.com/redis-developer/basic-caching-demo-nodejs/archive/main.zip",
+    "download_url": "https://github.com/VinGitonga/quiza_redis/archive/refs/heads/main.zip",
     "hosted_url": "https://quiza-redis.vercel.app/",
     "quick_deploy": "false",
     "deploy_buttons": [
@@ -31,7 +31,9 @@
     ], 
     "redis_modules": ["RediJSON", "RediSearch"], 
     "app_image_urls": [
-        "https://github.com/redis-developer/basic-caching-demo-nodejs/blob/main/docs/screenshot001.png?raw=true"
+        "https://iili.io/4CF6Is.md.jpg",
+        "https://iili.io/4CKHhb.md.png",
+        "https://iili.io/4CKJQj.md.png"
     ],
     "youtube_url": "", 
     "special_tags": ["Hackathon", "Redis", "DEV"], 
