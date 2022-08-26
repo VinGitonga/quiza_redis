@@ -1,0 +1,42 @@
+{
+    "app_name": "Quiza",
+    "description": "Online quiz platform where you can setup and practise quizzes", 
+    "hidden": false, 
+    "rank": 29, 
+    "type": "Full App",
+    "contributed_by": "Community",
+    "repo_url": "https://github.com/VinGitonga/quiza_redis",
+    "download_url": "https://github.com/redis-developer/basic-caching-demo-nodejs/archive/main.zip",
+    "hosted_url": "https://quiza-redis.vercel.app/",
+    "quick_deploy": "false",
+    "deploy_buttons": [
+        {
+            "heroku": "https://heroku.com/deploy?template=https://github.com/redis-developer/basic-caching-demo-nodejs" 
+        },
+        {
+            "vercel": "https://vercel.com/new/git/external?repository-url=https%3A%2F%2Fgithub.com%2Fredis-developer%2Fbasic-caching-demo-nodejs&env=REDIS_ENDPOINT_URI,REDIS_PASSWORD&envDescription=REDIS_ENDPOINT_URI%20is%20required%20at%20least%20to%20connect%20to%20Redis%20clouding%20server" 
+        },
+        {
+            "Google": "https://deploy.cloud.run/?git_repo=https://github.com/redis-developer/basic-caching-demo-nodejs.git" 
+        }
+    ],
+    "language": [
+        "JavaScript"
+    ],
+    "redis_commands": [
+        "GET, SET, DEL, EXPIRE"
+    ],
+    "redis_features": [
+        "caching, primary database"
+    ], 
+    "redis_modules": ["RediJSON", "RediSearch"], 
+    "app_image_urls": [
+        "https://github.com/redis-developer/basic-caching-demo-nodejs/blob/main/docs/screenshot001.png?raw=true"
+    ],
+    "youtube_url": "", 
+    "special_tags": ["Hackathon", "Redis", "DEV"], 
+    "verticals": [
+        "Education"
+    ], 
+    "markdown": "https://github.com/VinGitonga/quiza_redis/raw/main/README.md"
+}

@@ -1,168 +1,231 @@
-# Quiza
+
+## *Quiza*
+
 
 Quiza is an online platform whereby organizers, administrator or even tutors can setup and schedule quizzes for their students. The students can in turn signin and take the quizes scheduled.
 
-<a href="https://github.com/redis-developer/basic-analytics-dashboard-redis-bitmaps-nodejs/blob/main/preview.png?raw=true"><img src="https://github.com/redis-developer/basic-analytics-dashboard-redis-bitmaps-nodejs/blob/main/preview-min.png?raw=true" width="100%" height="auto"></a>
-<a href="https://github.com/redis-developer/basic-analytics-dashboard-redis-bitmaps-nodejs/blob/main/preview-2.png?raw=true"><img src="https://github.com/redis-developer/basic-analytics-dashboard-redis-bitmaps-nodejs/blob/main/preview-2-min.png?raw=true" width="50%" height="auto"></a><a href="https://github.com/redis-developer/basic-analytics-dashboard-redis-bitmaps-nodejs/blob/main/preview-3.png?raw=true"><img src="https://github.com/redis-developer/basic-analytics-dashboard-redis-bitmaps-nodejs/blob/main/preview-3-min.png?raw=true" width="50%" height="auto"></a>
 
-# Overview video
+## Screenshots 📸
+**HomePage**
+[![4CF6Is.md.jpg](https://iili.io/4CF6Is.md.jpg)](https://freeimage.host/i/4CF6Is)
 
-Here's a short video that explains the project and how it uses Redis:
+**Join a private quiz using a Code**
+[![4CKHhb.md.png](https://iili.io/4CKHhb.md.png)](https://freeimage.host/i/4CKHhb)
 
-[![Watch the video on YouTube](https://github.com/redis-developer/basic-analytics-dashboard-redis-bitmaps-nodejs/blob/cb8c2178a6c5a019c42aa91739ad9bfdbb2d558c/docs/YTThumbnail.png)](https://www.youtube.com/watch?v=Ugym4yUeIhA)
+**Taking a quiz**
+[![4CKJQj.md.png](https://iili.io/4CKJQj.md.png)](https://freeimage.host/i/4CKJQj)
+
+
+## Overview Video 🎥
+
+Here a short video that explains how the quiz app works
+
+Insert gif or link to demo
+
+
 
 ## How it works
-### How the data is stored:
 
-* The event data is stored in various keys and various data types.
-    * For each of time spans:
-        * year: like 2021
-        * month: like 2021-03 (means March of 2021)
-        * day: like 2021-03-03 (means 3rd March of 2021)
-        * weekOfMonth: like 2021-03/4 (means 4th week of March 2021)
-        * anytime
-        
-    * and for each of scopes:
-        * source
-        * action
-        * source + action
-        * action + page
-        * userId + action
-        * global
-        
-    * and for each of data types (types):
-        * count (Integer stored as String)
-        * bitmap
-        * set
-        
-Is generated key like: `rab:{type}[:custom:{customName}][:user:{userId}][:source:{source}][:action:{action}][:page:{page}]:timeSpan:{timeSpan}`, where values in `[]` are optional.
-* For each generated key like `rab:count:*`, data is stored like: `INCR {key}`
-    * E.g `INCR rab:count:action:addToCart:timeSpan:2015-12/3`
-* For each generated key like: `rab:set:*`, data is stored like: `SADD {key} {userId}`
-    * E.g `SADD rab:set:action:addToCart:timeSpan:2015-12/3 8`
-* For each generated key like `rab:bitmap:*`, data is stored like: `SETBIT {key} {userId} 1`.
-    * E.g `SETBIT rab:bitmap:action:addToCart:timeSpan:2015-12/3 8 1`
-* Cohort data:
-    * We store users who register and then bought some products (action order matters).
-    * For each buy action in December we check if user performed register action before (register counter must be greater than zero).
-    * If so, we set user bit to 1 like: `SETBIT rab:bitmap:custom:cohort-buy:timeSpan:{timeSpan} {userId} 1`
-    * E.g User Id 2 bought 2 products on 2015-12-17. He won't be stored.
-    * E.g User Id 10 bought 1 product on 2015-12-17 and registered on 2015-12-16. He will be stored like: `SETBIT rab:bitmap:custom:cohort-buy:timeSpan:2015-12 10 1`.
-    * We assume that user cannot buy without register.
-* Retention data:
-    * Retention means users who bought on two different dates
-    * For each buy action we check if user bought more products anytime than bought on particular day (current purchase not included).
-    * If so, we add user id to set like: `SADD rab:set:custom:retention-buy:timeSpan:{timeSpan} {userId}`
-    * E.g User Id 5 bought 3 products on 2015-12-15. His retention won't be stored (products bought on particular day: 2, products bought anytime: 0).
-    * E.g User Id 3 bought 1 product on 2015-12-15 and before - 1 product on 2015-12-13. His retention will be stored (products bought on particular day: 0, products bought anytime: 1) like: `SADD rab:set:custom:retention-buy:timeSpan:2015-12 3`.
+An organizer or a tutor first registers with our app.
+There after he/she can login. An organizer can create a new quiz,
+schedule when the quiz will allow students to take and also if they the quiz is private or public.
 
-### How the data is accessed:
+A public quiz allows any student to enroll and take the quiz.
+For a private quiz, 
+a student can only enroll to quiz if they have a unique quiz code.
 
-* Total Traffic: 
-    * December: `BITCOUNT rab:bitmap:custom:global:timeSpan:2015-12`
-    * X week of December: `BITCOUNT rab:bitmap:custom:global:timeSpan:2015-12/{X}`
-        * E.g `BITCOUNT rab:bitmap:custom:global:timeSpan:2015-12/3`
+After a quiz is created, an organizer adds new questions to the quiz and options with correctAnswer.
+Then after submission, the questions are saved on Redis Database.
 
-* Traffic per Page ({page} is one of: homepage, product1, product2, product3):
-    * December: `BITCOUNT rab:bitmap:action:visit:page:{page}:timeSpan:2015-12`
-        * E.g `BITCOUNT rab:bitmap:action:visit:page:homepage:timeSpan:2015-12`
-    * X week of December: `BITCOUNT rab:bitmap:action:visit:page:{page}:timeSpan:2015-12/{X}`
-        * E.g `BITCOUNT rab:bitmap:action:visit:page:product1:timeSpan:2015-12/2`
+A student can also create an account with quiza and login.
+A student can enroll to new quiz and also unenroll to existing quiz.
+A student can view all public quizzes and enroll and also enroll to 
+a private quiz using a unique quiz code.
 
-* Traffic per Source ({source} is one of: google, Facebook, email, direct, referral, none):
-    * December: `BITCOUNT rab:bitmap:source:{source}:timeSpan:2015-12`
-        * E.g `BITCOUNT rab:bitmap:source:referral:timeSpan:2015-12`
-    * X week of December: `BITCOUNT rab:bitmap:source:{source}:timeSpan:2015-12/{X}`
-        * E.g `BITCOUNT rab:bitmap:source:google:timeSpan:2015-12/1`
+Once a student is enrolled, now can be able to take the quiz. Student
+clicks the start button, the api confirms if the quiz is open, the api collects all the questions
+for quiz and stores in Redis Cache. Then UI redirects student to take quiz page.
+The Student starts attempting the questions with a time set.
+Once the student submits the questions, the api creates a score for the student.
+The api also saves all the responses in Redis Database.
 
-* Trend traffic ({page} is one of: homepage, product1, product2, product3):
-    * December: from `BITCOUNT rab:bitmap:action:visit:{page}:timeSpan:2015-12-01` to `BITCOUNT rab:bitmap:action:visit:{page}:timeSpan:2015-12-31`
-    * 1 Week of December: Similar as above, but from 2015-12-01 to 2015-12-07
-    * 2 Week of December: Similar as above, but from 2015-12-08 to 2015-12-14
-    * 3 Week of December: Similar as above, but from 2015-12-15 to 2015-12-21
-    * 4 Week of December: Similar as above, but from 2015-12-22 to 2015-12-28
-    * 5 Week of December: Similar as above, but from 2015-12-29 to 2015-12-31
-        * E.g `BITCOUNT rab:bitmap:action:visit:homepage:timeSpan:2015-12-29` => `BITCOUNT rab:bitmap:action:visit:homepage:timeSpan:2015-12-30` => `BITCOUNT rab:bitmap:action:visit:homepage:timeSpan:2015-12-31`
+Thereafter the student can view quiz attempt results.
+Also the student can attempt a quiz multiple times and results stored separately.
 
-* Total products bought:
-    * December: `GET rab:count:action:buy:timeSpan:2015-12`
-    * X week of December: `GET rab:count:action:buy:timeSpan:2015-12/{X}`
-        * E.g `GET rab:count:action:buy:timeSpan:2015-12/1`
+The app has a private leaderboard for each quiz inregardless of quiz attempts by each student.
 
-* Total products added to cart:
-    * December: `GET rab:count:action:addToCart:timeSpan:2015-12`
-    * X week of December: `GET rab:count:action:addToCart:timeSpan:2015-12/{X}`
-        * E.g `GET rab:count:action:addToCart:timeSpan:2015-12/1`
 
-* Shares of products bought ({productPage} is on of product1, product2, product3):
-    * December: `GET rab:count:action:buy:page:{productPage}:timeSpan:2015-12`
-        * E.g `GET rab:count:action:buy:page:product3:timeSpan:2015-12`
-    * X week of December: `GET rab:count:action:buy:page:{productPage}:timeSpan:2015-12/{X}`
-        * E.g `GET rab:count:action:buy:page:product1:timeSpan:2015-12/2`
+## How data is stored
 
-* Customer and Cohort Analysis:
-    * People who registered: `BITCOUNT rab:bitmap:action:register:timeSpan:2015-12`
-    * People who register then bought (order matters): `BITCOUNT rab:bitmap:custom:cohort-buy:timeSpan:2015-12`
-    * Dropoff: (People who register then bought / People who register) * 100 [%]
+In Quiza, [Redis-OM](https://github.com/redis/redis-om-node) for Node JS was utilized for handling JSON documents.
 
-* Customers who bought only specified product ({productPage} is one of: product1, product2, product3): `SMEMBERS rab:set:action:buy:page:{productPage}:timeSpan:2015-12`
-    * E.g `SMEMBERS rab:set:action:buy:page:product2:timeSpan:2015-12`
-* Customers who bought Product1 and Product2: `SINTER rab:set:action:buy:page:product1:timeSpan:anytime rab:set:action:buy:page:product2:timeSpan:anytime`
-* Customer Retention (customers who bought on the different dates): `SMEMBERS rab:set:custom:retention-buy:timeSpan:anytime`
+#### Creating new User
 
-## Hot to run it locally?
+***Schema***
+
+[![4CxkJ4.png](https://iili.io/4CxkJ4.png)](https://freeimage.host/)
+
+**Saving User Info**
+[![4CIA6g.md.png](https://iili.io/4CIA6g.md.png)](https://freeimage.host/i/4CIA6g)
+
+Here we initiliaze an instance of redis-om Client and fetch user schema which was created.
+Then create an new entity of user. We then populate it with details received from frontend.
+
+**Creating New Quiz**
+[![4CueC7.md.png](https://iili.io/4CueC7.md.png)](https://freeimage.host/i/4CueC7)
+
+[![4Cu3db.md.png](https://iili.io/4Cu3db.md.png)](https://freeimage.host/i/4Cu3db)
+
+We receive quiz details from frontend then save them and also who created the quiz.
+
+Quiz code is generated by nanoid for uniqueness.
+
+
+**Enrolling To Quiz**
+[![4CAxwl.md.png](https://iili.io/4CAxwl.md.png)](https://freeimage.host/i/4CAxwl)
+
+Here we receive quizId and userId from frontend and confirm if user is enrolled, if not we add user to our quiz enrollment list
+
+**Taking the Quiz**
+
+[![4CRzJa.md.png](https://iili.io/4CRzJa.md.png)](https://freeimage.host/i/4CRzJa)
+
+When student clicks start quiz button, questions of a quiz are fetched and they are stored on redis cache using userId as the key.
+
+They be retrieved when marking the questions against the answers.
+
+**Marking The Quiz**
+[![4C5cQV.md.png](https://iili.io/4C5cQV.md.png)](https://freeimage.host/i/4C5cQV)
+[![4C5ryG.md.png](https://iili.io/4C5ryG.md.png)](https://freeimage.host/i/4C5ryG)
+
+Here when we mark correct all responses made on the questions,
+
+We retrieved stored questions from redis cache and for each response we create a new entity for it.
+
+Once done, we retrieve all responses entity ids and store them in quiz taken entity to allow storage of new attempts.
+
+**Creating Question**
+[![4C7fF1.md.png](https://iili.io/4C7fF1.md.png)](https://freeimage.host/i/4C7fF1)
+[![4C7API.md.png](https://iili.io/4C7API.md.png)](https://freeimage.host/i/4C7API)
+
+We get question details from frontend and save the question on Redis Database.
+
+
+## How is data accessed
+
+* Authentication (Login)
+[![4CYCfS.md.png](https://iili.io/4CYCfS.md.png)](https://freeimage.host/i/4CYCfS)
+
+For login, next auth was utilised to facilitate user login sessions.
+For one to login, user has to provider email and password.
+
+Using RedisSearch we retrieve user with that email and validate with the provided password.
+
+* Quiz Detail and fetch questions
+
+[![4CYv7n.md.png](https://iili.io/4CYv7n.md.png)](https://freeimage.host/i/4CYv7n)
+
+In order to get quiz detail, we provided quizId(entityId) so that we can fetch that quiz and return its details.
+[![4CYi1S.md.png](https://iili.io/4CYi1S.md.png)](https://freeimage.host/i/4CYi1S)
+For questions, we use quizId provided to get all questions associated with that quiz.
+
+* All Public Quizzes
+
+[![4Ca321.md.png](https://iili.io/4Ca321.md.png)](https://freeimage.host/i/4Ca321)
+
+Fetched by searching all quizzes whose type is public.
+
+* User enrolled quizzes;
+
+[![4CaRvn.md.png](https://iili.io/4CaRvn.md.png)](https://freeimage.host/i/4CaRvn)
+
+Use Next-Auth user session to get their enrolled quizzes;
+
+* User Quiz Submissions
+
+[![4CcfFS.md.png](https://iili.io/4CcfFS.md.png)](https://freeimage.host/i/4CcfFS)
+
+* Quiz Attempt Results
+
+[![4CcMVR.md.png](https://iili.io/4CcMVR.md.png)](https://freeimage.host/i/4CcMVR)
+
+Here we use the unique attemptId to retrieve that quiz attempt information.
+
+* Quiz Author Quizzes
+
+[![4Ccrf2.md.png](https://iili.io/4Ccrf2.md.png)](https://freeimage.host/i/4Ccrf2)
+
+Here we use userId of logged user via next-auth and fetch all quizzes they authored.
+
+* Quiz Leaderboard Results
+
+[![4Cld5F.md.png](https://iili.io/4Cld5F.md.png)](https://freeimage.host/i/4Cld5F)
+
+Here retrieve all results of each user who took the quiz test.
+We use quizId to get the results.
+
+
+
+For most part of how data was accessed, I made use of RedisSearch, you can [refer to its docs](https://github.com/redis/redis-om-node#-using-redisearch)
+
+## How To Run It Locally?
 
 ### Prerequisites
 
-- Node - v12.19.0
-- NPM - v6.14.8
-- Docker - v19.03.13 (optional)
+* Node JS v16.16.0
+* Yarn (v1.22.19) or NPM latest version
+* Redis Stack Server (optional for cloud)
+* Redis CLI (optional for cloud)
+* Git
 
-### Local installation
 
-Go to `/server` folder (`cd ./server`) and then:
+Clone the project
 
-```
-# copy file and set proper data inside
-cp .env.example .env
-
-# install dependencies
-npm install
-
-# run docker compose or install redis manually
-docker network create global
-docker-compose up -d --build
-
-# Run dev server
-npm run dev
+```bash
+  git clone https://github.com/VinGitonga/quiza_redis.git
 ```
 
-Go to `/client` folder (`cd ./client`) and then:
+Go to the project directory
+
+```bash
+  cd quiza_redis
+```
+
+Open .env file using your text editor and add REDIS_URL path either for local enviroment(Redis Stack Server) 
+
+If you have Redis Stack Server installed, add this line on .env file
+```
+REDIS_URL = redis://localhost:6379
+```
+For if you prefer redis cloud, kindly refer on [Redis Cloud](https://redis.com/try-free/) to obtain redis cloud url which you'll setup like this.
 
 ```
-# copy file and set proper data inside
-cp .env.example .env
-
-# install dependencies
-npm install
-
-# run development mode
-npm run serve
+REDIS_URL = redis://<redis_cloud_username>:<password>@<redis_host>:<redis_port>
 ```
+Values for connecting to Redis remotely are provided on Redis Cloud platform.
+
+
+
+Install dependencies
+
+```bash
+  yarn or npm install
+```
+
+Start the server
+
+```bash
+  yarn dev or npm run dev
+```
+
 
 ## Deployment
 
-To make deploys work, you need to create free account in https://redislabs.com/try-free/
+To make deployments you have to use [Vercel](https://redis.info/try-free-dev-to) and also use [Redis Cloud Server](https://redis.info/try-free-dev-to)
 
-### Google Cloud Run
 
-[![Run on Google
-Cloud](https://deploy.cloud.run/button.svg)](https://deploy.cloud.run/?git_repo=https://github.com/redis-developer/basic-analytics-dashboard-redis-bitmaps-nodejs.git&revision=feature/deploy-buttons)
 
-### Heroku
+## License
 
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+[MIT](https://choosealicense.com/licenses/mit/)
 
-### Vercel
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/git/external?repository-url=https://github.com/redis-developer/basic-analytics-dashboard-redis-bitmaps-nodejs&env=REDIS_ENDPOINT_URI,REDIS_PASSWORD)
