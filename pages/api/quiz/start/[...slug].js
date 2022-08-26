@@ -55,7 +55,7 @@ async function startQuiz(req, res) {
         // Confirm if the quiz has started
 
         if (
-            new Date(quiz.scheduledFor).toISOString().replace("Z", "") >=
+            new Date(new Date(quiz.scheduledFor).toISOString().replace("Z", "")) >=
             Date.now()
         ) {
             return res.status(400).json({
