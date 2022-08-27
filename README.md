@@ -20,7 +20,7 @@ Quiza is an online platform whereby organizers, administrator or even tutors can
 
 Here a short video that explains how the quiz app works
 
-{% embed https://youtu.be/iYcgkOwa09Q %}
+[![Embed your YouTube video](https://iili.io/4CF6Is.md.jpg)](https://youtu.be/iYcgkOwa09Q)
 
 ## How it works
 
