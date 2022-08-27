@@ -53,6 +53,7 @@ async function startQuiz(req, res) {
         }
 
         // Confirm if the quiz has started
+        console.log(new Date(new Date(quiz.scheduledFor).toISOString().replace("Z", "")))
 
         if (
             new Date(new Date(quiz.scheduledFor).toISOString().replace("Z", "")) >=
